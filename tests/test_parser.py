@@ -7,6 +7,13 @@ class TestParser(unittest.TestCase):
         """
         Test that valid quadratic equations are parsed correctly.
         """
+        inputEquation = "2x^2 + 4x - 6"
+        expectedOutput = QuadraticEquation(a=2, b=4, c=6)
+
+        result = parse_quadratic(inputEquation)
+        self.assertEqual(result.a, expectedOutput.a)
+        self.assertEqual(result.b, expectedOutput.b)
+        self.assertEqual(result.c, expectedOutput.c)
 
     def test_no_constant_term(self):
         """
