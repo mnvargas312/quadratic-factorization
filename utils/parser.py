@@ -18,22 +18,41 @@ def parse_quadratic(equation_str):
 	# Remove spaces from string
 	equation_str = equation_str.replace (" ", "")
 
-	pattern = r'([+-]?\d*)x\^2|([+-]?\d*)x|([+-]?\d+)'
-	matches = re.findall(pattern, equation_str)
-	
-	if not matches:
-		raise ValueError("Invalid quadratic equation format")
-	
-	# Extract Coeffiecents
-	a, b, c = 0, 0, 0
-	
-	for match in matches:
-		if match[0]:
-			a = int(match[0]) if match[0] not in ("", "+", "-") else (1 if match[0] != "-" else -1)
-		elif match[1]:
-			b = int(match[1]) if match[1] not in ("", "+", "-") else (1 if match[1] != "-" else -1)
-		elif match[2]:
-			c = int(match[2])
+	terms = re.findall(r'[+-]?[^+-]+', equation_str)
 
-	# Return Quadratic Equation object
-	return QuadraticEquation(a=a, b=b, c=c)
+	
+	# Extract coefficents
+	a, b, c = 0, 0, 0
+
+	# Process each term
+	for term in terms:
+		if "x^2" in term:  # Quadratic term
+			coefficient = term.replace("x^2", "")
+			a = parse_coefficient(coefficient)
+		elif "x" in term:  # Linear term
+			coefficient = term.replace("x", "")
+			b = parse_coefficient(coefficient)
+		else:  # Constant term
+			c = int(term)  # Constants are always integers
+
+	print(f"Parsed coefficients: a={a}, b={b}, c={c}")
+
+	# Return the parsed coefficients as a QuadraticEquation object
+	return QuadraticEquation(a, b, c)
+
+def parse_coefficient(coefficient_str):
+    """
+    Parse the coefficient of a term, handling implicit coefficients.
+
+    Args:
+        coefficient_str (str): The coefficient part of a term, e.g., "-3" or "".
+
+    Returns:
+        int: The parsed coefficient.
+    """
+    if coefficient_str == "" or coefficient_str == "+":
+        return 1
+    elif coefficient_str == "-":
+        return -1
+    else:
+        return int(coefficient_str)
